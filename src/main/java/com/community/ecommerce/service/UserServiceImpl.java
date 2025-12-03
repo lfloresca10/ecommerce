@@ -34,25 +34,21 @@ public class UserServiceImpl implements UserService {
     public String deleteUser(Long id) {
         boolean removed = users.removeIf(user -> user.getId().equals(id));
          if(removed) {
-             return "Delete successfully";
+             return "Deleted successfully";
          } else {
              return "User not found";
          }
     }
 
     @Override
-    public String updateUser(User user) {
-        User existingUser = users.stream()
+    public boolean updateUser(User user) {
+       return users.stream()
                 .filter(u -> u.getId().equals(user.getId()))
                 .findFirst()
-                .orElse(null);
-
-        if(existingUser != null) {
-            existingUser.setFirstName(user.getFirstName());
-            existingUser.setLastName(user.getLastName());
-            return "User updated";
-        } else {
-            return "User not found";
-        }
+                .map(existingUser -> {
+                    existingUser.setFirstName(user.getFirstName());
+                    existingUser.setLastName(user.getLastName());
+                    return true;
+                }).orElse(false);
     }
 }

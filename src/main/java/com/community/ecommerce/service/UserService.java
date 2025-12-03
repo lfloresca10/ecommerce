@@ -10,5 +10,5 @@ public interface UserService {
     User fetchUser(Long id);
     String createUser(User user);
     String deleteUser(Long id);
-    String updateUser(User user);
+    boolean updateUser(User user);
 }
