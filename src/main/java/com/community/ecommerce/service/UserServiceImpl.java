@@ -1,54 +1,50 @@
 package com.community.ecommerce.service;
 
 import com.community.ecommerce.model.User;
+import com.community.ecommerce.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private List<User> users = new ArrayList<>();
+    private UserRepository userRepository;
 
     @Override
     public List<User> fetchUsers() {
-        return users;
+        return userRepository.findAll();
     }
 
     @Override
     public User fetchUser(Long id) {
-        return users.stream()
-                .filter(u -> u.getId().equals(id))
-                .findFirst()
-                .orElse(null);
+        return userRepository.findById(id).orElse(null);
     }
 
     @Override
-    public String createUser(User user) {
-        users.add(user);
-        return "Added successfully";
+    public User createUser(User user) {
+        return userRepository.save(user);
     }
 
     @Override
-    public String deleteUser(Long id) {
-        boolean removed = users.removeIf(user -> user.getId().equals(id));
-         if(removed) {
-             return "Deleted successfully";
-         } else {
-             return "User not found";
-         }
+    public boolean deleteUser(Long id) {
+        if(!userRepository.existsById(id))
+            return false;
+
+        userRepository.deleteById(id);
+        return true;
     }
 
     @Override
     public boolean updateUser(User user) {
-       return users.stream()
-                .filter(u -> u.getId().equals(user.getId()))
-                .findFirst()
+        return userRepository.findById(user.getId())
                 .map(existingUser -> {
                     existingUser.setFirstName(user.getFirstName());
                     existingUser.setLastName(user.getLastName());
-                    return true;
+                    userRepository.save(existingUser);
+                   return true;
                 }).orElse(false);
     }
 }

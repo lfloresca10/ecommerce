@@ -31,18 +31,19 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createUser(@RequestBody User user) {
+    public ResponseEntity<User> createUser(@RequestBody User user) {
         if(user == null) {
             return ResponseEntity.badRequest().build();
         }
-        String status = userService.createUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(status);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(user));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
-        String status = userService.deleteUser(id);
-        return ResponseEntity.ok(status);
+        boolean deleted = userService.deleteUser(id);
+        if(deleted)
+            return ResponseEntity.ok("User deleted successfully");
+        return ResponseEntity.notFound().build();
     }
 
     @PutMapping
