@@ -1,6 +1,7 @@
 package com.community.ecommerce.controller;
 
-import com.community.ecommerce.model.User;
+import com.community.ecommerce.dto.UserRequest;
+import com.community.ecommerce.dto.UserResponse;
 import com.community.ecommerce.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,21 +18,19 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
         return ResponseEntity.ok(userService.fetchUsers());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUser(@PathVariable Long id) {
-        User user =  userService.fetchUser(id);
-        if(user != null) {
-            return ResponseEntity.ok(user);
-        }
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<UserResponse> getUser(@PathVariable Long id) {
+        return userService.fetchUser(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
+    public ResponseEntity<UserResponse> createUser(@RequestBody UserRequest user) {
         if(user == null) {
             return ResponseEntity.badRequest().build();
         }
@@ -46,9 +45,9 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
-    @PutMapping
-    public ResponseEntity<String> updateUser(@RequestBody User user) {
-        boolean updated =  userService.updateUser(user);
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateUser(@PathVariable Long id, @RequestBody UserRequest user) {
+        boolean updated =  userService.updateUser(id, user);
         if(updated)
             return ResponseEntity.ok("User updated successfully");
         return ResponseEntity.notFound().build();
