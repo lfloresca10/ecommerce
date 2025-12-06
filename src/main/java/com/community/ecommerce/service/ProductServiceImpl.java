@@ -4,7 +4,7 @@ import com.community.ecommerce.dto.ProductRequest;
 import com.community.ecommerce.dto.ProductResponse;
 import com.community.ecommerce.model.Product;
 import com.community.ecommerce.repository.ProductRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,10 +12,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService{
 
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
     @Override
     public ProductResponse createProduct(ProductRequest productRequest) {
